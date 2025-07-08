@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import subprocess
 import os
+import platform
 from Bio import SeqIO
 
 app = Flask(__name__)
@@ -9,7 +10,11 @@ app.secret_key = "supersecretkey"
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-bioseq_path = r"C:\Strawberry\perl\site\bin\bioseq.bat"
+# Detect platform
+if platform.system() == 'Windows':
+    bioseq_path = r"C:\Strawberry\perl\site\bin\bioseq.bat"
+else:
+    bioseq_path = None  # Not available on Linux
 
 
 def format_bioseq_output(raw_output):
@@ -83,6 +88,12 @@ def analyze():
             result = f"Error reading GenBank file: {e}"
         return render_template('result.html', output=result, filename=file.filename)
 
+    # If bioseq is not available on platform (Linux), disable these operations
+    if bioseq_path is None:
+        flash("bioseq operations are not supported on this platform.", "warning")
+        return redirect(url_for('home'))
+
+    # Prepare command for Windows platform
     command = ['cmd', '/c', bioseq_path]
 
     if operation == 'gc':
