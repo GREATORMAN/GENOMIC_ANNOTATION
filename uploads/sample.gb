@@ -1,0 +1,47 @@
+LOCUS       SCU49845     5028 bp    DNA             PLN       21-JUN-1999
+DEFINITION  Saccharomyces cerevisiae TCP1-beta gene, partial cds, and Axl2p
+            (AXL2) and Rev7p (REV7) genes, complete cds.
+ACCESSION   U49845
+VERSION     U49845.1
+KEYWORDS    .
+SOURCE      Saccharomyces cerevisiae (baker's yeast)
+  ORGANISM  Saccharomyces cerevisiae
+            Eukaryota; Fungi; Ascomycota; Saccharomycotina; Saccharomycetes;
+            Saccharomycetales; Saccharomycetaceae; Saccharomyces.
+REFERENCE   1  (bases 1 to 5028)
+  AUTHORS   Torpey,L.E., Gibbs,P.E., Nelson,J. and Lawrence,C.W.
+  TITLE     Cloning and sequence of REV7, a gene whose function is required for
+            DNA damage-induced mutagenesis in Saccharomyces cerevisiae
+  JOURNAL   Yeast 10 (11), 1503-1509 (1994)
+FEATURES             Location/Qualifiers
+     source          1..5028
+                     /organism="Saccharomyces cerevisiae"
+                     /db_xref="taxon:4932"
+     gene            1..206
+                     /gene="TCP1-beta"
+     CDS             1..206
+                     /gene="TCP1-beta"
+                     /note="chaperonin beta subunit"
+                     /codon_start=1
+                     /product="TCP1-beta protein"
+                     /protein_id="AAA98665.1"
+                     /translation="MVLTIYPDELVQIVSDKK"
+     gene            687..3158
+                     /gene="AXL2"
+     CDS             687..3158
+                     /gene="AXL2"
+                     /note="plasma membrane glycoprotein"
+                     /codon_start=1
+                     /product="Axl2p"
+                     /protein_id="AAA98666.1"
+                     /translation="MALKILLNQWILKKFLALVGL..."
+ORIGIN
+        1 atgctcctag tgggtggctt gctgacggtg tctggttctg gatctgacgg tgtctggttc
+       61 tgctgacggt gttggttctg gatctgacgg tgtctggttc tgctgacggt gttggttctg
+      121 gatctgacgg tgtctggttc tgctgacggt gttggttctg gatctgacgg tgtctggttc
+      181 tgctgacggt gttggttctg gatctgacgg tgtctggttc tgctgacggt gttggttctg
+      241 gatctgacgg tgtctggttc tgctgacggt gttggttctg gatctgacgg tgtctggttc
+      301 tgctgacggt gttggttctg gatctgacgg tgtctggttc tgctgacggt gttggttctg
+      361 gatctgacgg tgtctggttc tgctgacggt gttggttctg gatctgacgg tgtctggttc
+      421 tgctgacggt gttggttctg gatctgacgg tgtctggttc tgctgacggt gttggttctg
+//

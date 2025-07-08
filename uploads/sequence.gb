@@ -1,0 +1,45 @@
+LOCUS       AF076983                 491 bp    DNA     linear   BCT 20-SEP-1998
+DEFINITION  Caulobacter crescentus histone-like protein (hu) gene, complete
+            cds.
+ACCESSION   AF076983
+VERSION     AF076983.1
+KEYWORDS    .
+SOURCE      Caulobacter vibrioides CB15
+  ORGANISM  Caulobacter vibrioides CB15
+            Bacteria; Pseudomonadati; Pseudomonadota; Alphaproteobacteria;
+            Caulobacterales; Caulobacteraceae; Caulobacter.
+REFERENCE   1  (bases 1 to 491)
+  AUTHORS   England,J.E. and Gober,J.W.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (09-JUL-1998) Chemistry and Biochemistry and the
+            Molecular Biology Institute, UCLA, 405 Hilgard Ave., Los Angeles,
+            CA 90095-1569, USA
+FEATURES             Location/Qualifiers
+     source          1..491
+                     /organism="Caulobacter vibrioides CB15"
+                     /mol_type="genomic DNA"
+                     /sub_strain="CB15N"
+                     /db_xref="taxon:190650"
+     gene            144..422
+                     /gene="hu"
+     CDS             144..422
+                     /gene="hu"
+                     /note="HU"
+                     /codon_start=1
+                     /transl_table=11
+                     /product="histone-like protein"
+                     /protein_id="AAC36331.1"
+                     /translation="MTTKAELVTAIAEKAGINKNQAKDALEAFIEAVTDSLKSGQDVR
+                     LVGFGTFKAVTRAAGTARNPRTGETVNRPASNTARFQVGEGLKSSLNS"
+ORIGIN      
+        1 gataacttat cgatggtaac ttaggcggcg cgggagtttc ccgcgccgct cgcgtttgac
+       61 ggggcttttt caaccgccat aatcctcttc gagcgcagcg tcgtcagcga tgaaagcgtc
+      121 gccgctcagg ctgggagaga aacatgacca caaaagccga gctcgttacg gcgatcgccg
+      181 agaaggcggg catcaacaag aaccaggcca aggacgcgct ggaagccttt atcgaagcgg
+      241 ttacggactc gctgaaatcg ggccaagacg tgcgtcttgt cggctttggc accttcaagg
+      301 ccgtgacccg cgcggctgga accgcgcgta atccccgtac cggtgagacc gtcaaccgtc
+      361 ccgcgtccaa cacggcccgc ttccaggtcg gcgaaggtct gaagtcttcg ctcaacagct
+      421 aggcggcata tcgatcgtgt cgagggcggg gcgtcggagc ttgacgtccc gcttttcgtt
+      481 ttccgctttg c
+//
+

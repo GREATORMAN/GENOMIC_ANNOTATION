@@ -1,0 +1,26 @@
+project notes C:\Users\sachi>cd C:\Users\sachi\bioseq_web_app
+bioseq -n C:\Users\sachi\test.fasta
+bioseq -c C:\Users\sachi\test.fasta     :: Base composition
+bioseq -l C:\Users\sachi\test.fasta     :: Sequence lengths
+| Command               | Description                                         |
+| --------------------- | --------------------------------------------------- |
+| `-n`                  | Number of sequences                                 |
+| `-l`                  | Lengths of each sequence                            |
+| `-c`                  | Base or amino acid composition                      |
+| `--mol-wt`            | Molecular weight bounds                             |
+| `--iep`               | Isoelectric point & charges at pH levels (proteins) |
+| `--lead-gaps` or `-G` | Count leading gaps in each sequence                 |
+| `--num-gaps-dna`      | Count ambiguous bases (non-ATCG) in DNA             |
+| `--num-gaps-aa`       | Count invalid residues in protein sequences         |
+
+manipulation
+| Command                  | Description                            |
+| ------------------------ | -------------------------------------- |
+| `-r`                     | Reverse complement sequences           |
+| `-t 1` / `-t 3` / `-t 6` | Translate in 1 / 3 / 6 reading frames  |
+| `-s 'start,end'`         | Subsequence of a sequence              |
+| `--g` or `--no-gaps`     | Remove gaps                            |
+| `--remove-stop` or `-X`  | Remove stop codons                     |
+| `--reloop 'position'`    | Re-circularize genome at position      |
+| `--linearize` or `-L`    | Linearize FASTA: one sequence per line |
+| `--longest-orf` or `-z`  | Find longest open reading frame        |
