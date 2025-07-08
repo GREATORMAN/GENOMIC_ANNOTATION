@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import subprocess
 import os
 import platform
+import uuid
+from werkzeug.utils import secure_filename
 from Bio import SeqIO
 
 app = Flask(__name__)
@@ -14,7 +16,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 if platform.system() == 'Windows':
     bioseq_path = r"C:\Strawberry\perl\site\bin\bioseq.bat"
 else:
-    bioseq_path = None  # Not available on Linux
+    bioseq_path = None  # bioseq.bat not available on non-Windows systems
 
 
 def format_bioseq_output(raw_output):
@@ -30,7 +32,6 @@ def format_bioseq_output(raw_output):
 def format_features_output(features):
     html = ""
     for feat in features:
-        # Split the feature string by <br> to separate key:value pairs
         parts = feat.split('<br>')
         html += '<div class="gene-block">'
         for part in parts:
@@ -38,7 +39,6 @@ def format_features_output(features):
                 key, val = part.split(':', 1)
                 html += f'<p><strong>{key.strip()}:</strong> {val.strip()}</p>'
             else:
-                # In case line does not contain ':', just add as is
                 html += f'<p>{part.strip()}</p>'
         html += '</div>'
     return html
@@ -64,7 +64,10 @@ def analyze():
         flash('No operation selected!', 'danger')
         return redirect(url_for('home'))
 
-    filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+    # Secure filename and add unique prefix to avoid collisions
+    filename = secure_filename(file.filename)
+    unique_filename = f"{uuid.uuid4().hex}_{filename}"
+    filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
     file.save(filepath)
 
     if operation == 'feat2fas':
@@ -86,14 +89,12 @@ def analyze():
             result = format_features_output(features) if features else "No gene features found in the GenBank file."
         except Exception as e:
             result = f"Error reading GenBank file: {e}"
-        return render_template('result.html', output=result, filename=file.filename)
+        return render_template('result.html', output=result, filename=filename)
 
-    # If bioseq is not available on platform (Linux), disable these operations
     if bioseq_path is None:
         flash("bioseq operations are not supported on this platform.", "warning")
         return redirect(url_for('home'))
 
-    # Prepare command for Windows platform
     command = ['cmd', '/c', bioseq_path]
 
     if operation == 'gc':
@@ -150,7 +151,7 @@ def analyze():
     except Exception as e:
         result = f"Unexpected error: {str(e)}"
 
-    return render_template('result.html', output=result, filename=file.filename)
+    return render_template('result.html', output=result, filename=filename)
 
 
 @app.route('/genome-annotate', methods=['GET', 'POST'])
@@ -161,7 +162,9 @@ def genome_annotate():
             flash('No file selected!', 'danger')
             return redirect(url_for('genome_annotate'))
 
-        filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+        filename = secure_filename(file.filename)
+        unique_filename = f"{uuid.uuid4().hex}_{filename}"
+        filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
         file.save(filepath)
 
         try:
@@ -190,7 +193,7 @@ def genome_annotate():
         except Exception as e:
             result = f"Error reading GenBank file: {e}"
 
-        return render_template('genome_annotate_result.html', output=result, filename=file.filename)
+        return render_template('genome_annotate_result.html', output=result, filename=filename)
 
     return render_template('genome_annotate.html')
 
