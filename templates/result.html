@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Analysis Result</title>
 
-  <!-- Google Fonts -->
+  <!-- Fonts + CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -22,7 +22,7 @@
       color: #1d2b64;
     }
     .card {
-      max-width: 900px;
+      max-width: 950px;
       width: 100%;
       border-radius: 16px;
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
@@ -64,37 +64,34 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 0;
-    }
-    table, th, td {
-      border: 1px solid #ccc;
     }
     th, td {
+      border: 1px solid #ccc;
       padding: 8px 12px;
       text-align: left;
+    }
+    canvas {
+      margin-top: 20px;
     }
     .text-center {
       margin-top: 30px;
       text-align: center;
     }
-    .btn-secondary {
+    .btn-secondary, .btn-export {
       background: linear-gradient(90deg, #8f94fb, #4e54c8);
       border: none;
       font-weight: 600;
       border-radius: 12px;
       padding: 10px 25px;
       transition: background 0.3s ease;
-      display: inline-block;
       color: white;
       text-decoration: none;
+      margin: 10px 5px;
+      cursor: pointer;
     }
-    .btn-secondary:hover {
+    .btn-secondary:hover, .btn-export:hover {
       background: linear-gradient(90deg, #4e54c8, #8f94fb);
       color: #fff;
-      text-decoration: none;
-    }
-    canvas {
-      margin-top: 30px;
     }
   </style>
 </head>
@@ -106,24 +103,36 @@
       {{ output|safe }}
     </div>
 
-    {% if gc_data %}
-    <canvas id="gcChart" height="180"></canvas>
+    {% if gc_chart_data %}
+    <div class="text-center">
+      <canvas id="barChart" height="180"></canvas>
+      <canvas id="pieChart" height="180"></canvas>
+      <button class="btn-export" onclick="downloadChart('barChart')">Download Bar Chart</button>
+      <button class="btn-export" onclick="downloadChart('pieChart')">Download Pie Chart</button>
+    </div>
+
     <script>
-      const gcData = {{ gc_data|safe }};
-      const ctx = document.getElementById('gcChart').getContext('2d');
-      new Chart(ctx, {
+      const data = {{ gc_chart_data|safe }};
+      const baseLabels = Object.keys(data);
+      const baseValues = Object.values(data);
+      const colors = ['#4e79a7', '#f28e2c', '#e15759', '#76b7b2'];
+
+      // Bar Chart
+      const barCtx = document.getElementById('barChart').getContext('2d');
+      new Chart(barCtx, {
         type: 'bar',
         data: {
-          labels: Object.keys(gcData),
+          labels: baseLabels,
           datasets: [{
             label: 'Base Composition',
-            data: Object.values(gcData),
-            backgroundColor: ['#4e79a7', '#f28e2c', '#e15759', '#76b7b2'],
-            borderRadius: 6
+            data: baseValues,
+            backgroundColor: colors,
+            borderRadius: 8
           }]
         },
         options: {
           responsive: true,
+          animation: { duration: 1000 },
           plugins: {
             legend: { display: false },
             tooltip: { enabled: true }
@@ -133,12 +142,42 @@
               beginAtZero: true,
               title: {
                 display: true,
-                text: 'Base Count'
+                text: 'Count'
               }
             }
           }
         }
       });
+
+      // Pie Chart
+      const pieCtx = document.getElementById('pieChart').getContext('2d');
+      new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+          labels: baseLabels,
+          datasets: [{
+            label: 'Base Composition',
+            data: baseValues,
+            backgroundColor: colors
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom' },
+            tooltip: { enabled: true }
+          }
+        }
+      });
+
+      function downloadChart(id) {
+        const canvas = document.getElementById(id);
+        const url = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = id + '.png';
+        link.click();
+      }
     </script>
     {% endif %}
 
