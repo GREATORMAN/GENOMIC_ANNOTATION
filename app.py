@@ -1,9 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import subprocess
 import os
-import platform
-import uuid
-from werkzeug.utils import secure_filename
+import json
+import re
 from Bio import SeqIO
 
 app = Flask(__name__)
@@ -12,12 +11,7 @@ app.secret_key = "supersecretkey"
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Detect platform
-if platform.system() == 'Windows':
-    bioseq_path = r"C:\Strawberry\perl\site\bin\bioseq.bat"
-else:
-    bioseq_path = None  # bioseq.bat not available on non-Windows systems
-
+bioseq_path = r"C:\Strawberry\perl\site\bin\bioseq.bat"
 
 def format_bioseq_output(raw_output):
     lines = raw_output.strip().split('\n')
@@ -27,7 +21,6 @@ def format_bioseq_output(raw_output):
         html += "<tr>" + "".join(f"<td>{col}</td>" for col in row) + "</tr>"
     html += "</table>"
     return html
-
 
 def format_features_output(features):
     html = ""
@@ -43,11 +36,9 @@ def format_features_output(features):
         html += '</div>'
     return html
 
-
 @app.route('/')
 def home():
     return render_template('index.html')
-
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
@@ -64,10 +55,7 @@ def analyze():
         flash('No operation selected!', 'danger')
         return redirect(url_for('home'))
 
-    # Secure filename and add unique prefix to avoid collisions
-    filename = secure_filename(file.filename)
-    unique_filename = f"{uuid.uuid4().hex}_{filename}"
-    filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
+    filepath = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(filepath)
 
     if operation == 'feat2fas':
@@ -89,16 +77,15 @@ def analyze():
             result = format_features_output(features) if features else "No gene features found in the GenBank file."
         except Exception as e:
             result = f"Error reading GenBank file: {e}"
-        return render_template('result.html', output=result, filename=filename)
-
-    if bioseq_path is None:
-        flash("bioseq operations are not supported on this platform.", "warning")
-        return redirect(url_for('home'))
+        return render_template('result.html', output=result, filename=file.filename)
 
     command = ['cmd', '/c', bioseq_path]
+    show_gc_chart = False
+    gc_data = {}
 
     if operation == 'gc':
         command += ['-c', filepath]
+        show_gc_chart = True
     elif operation == 'length':
         command += ['-l', filepath]
     elif operation == 'count':
@@ -146,13 +133,19 @@ def analyze():
     try:
         raw_result = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=False, timeout=20).decode('utf-8')
         result = format_bioseq_output(raw_result)
+
+        if show_gc_chart:
+            matches = re.findall(r'([ACGT]):(\d+)', raw_result)
+            for base, count in matches:
+                gc_data[base] = int(count)
+            return render_template('result.html', output=result, filename=file.filename, gc_data=json.dumps(gc_data))
+
     except subprocess.CalledProcessError as e:
         result = f"Error running bioseq:\n{e.output.decode('utf-8')}"
     except Exception as e:
         result = f"Unexpected error: {str(e)}"
 
-    return render_template('result.html', output=result, filename=filename)
-
+    return render_template('result.html', output=result, filename=file.filename)
 
 @app.route('/genome-annotate', methods=['GET', 'POST'])
 def genome_annotate():
@@ -162,9 +155,7 @@ def genome_annotate():
             flash('No file selected!', 'danger')
             return redirect(url_for('genome_annotate'))
 
-        filename = secure_filename(file.filename)
-        unique_filename = f"{uuid.uuid4().hex}_{filename}"
-        filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
+        filepath = os.path.join(UPLOAD_FOLDER, file.filename)
         file.save(filepath)
 
         try:
@@ -193,10 +184,9 @@ def genome_annotate():
         except Exception as e:
             result = f"Error reading GenBank file: {e}"
 
-        return render_template('genome_annotate_result.html', output=result, filename=filename)
+        return render_template('genome_annotate_result.html', output=result, filename=file.filename)
 
     return render_template('genome_annotate.html')
-
 
 if __name__ == '__main__':
     app.run(debug=True)
