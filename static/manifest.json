@@ -1,0 +1,21 @@
+{
+  "name": "Bioseq App",
+  "short_name": "Bioseq",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1d2b64",
+  "theme_color": "#4e54c8",
+  "description": "Analyze biological sequences with Bioseq tools",
+  "icons": [
+    {
+      "src": "/static/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
