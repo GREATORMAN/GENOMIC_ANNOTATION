@@ -7,9 +7,8 @@
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     body {
@@ -23,7 +22,7 @@
       color: #1d2b64;
     }
     .card {
-      max-width: 700px;
+      max-width: 900px;
       width: 100%;
       border-radius: 16px;
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
@@ -47,10 +46,8 @@
       line-height: 1.4;
       color: #333;
       box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
-      white-space: normal; /* allow wrapping */
-      margin-bottom: 20px;
+      white-space: normal;
     }
-    /* Styling for gene feature blocks */
     .gene-block {
       margin-bottom: 20px;
       padding-bottom: 15px;
@@ -76,10 +73,9 @@
       padding: 8px 12px;
       text-align: left;
     }
-    hr {
-      border: none;
-      border-top: 1px solid #ddd;
-      margin: 15px 0;
+    .text-center {
+      margin-top: 30px;
+      text-align: center;
     }
     .btn-secondary {
       background: linear-gradient(90deg, #8f94fb, #4e54c8);
@@ -89,7 +85,6 @@
       padding: 10px 25px;
       transition: background 0.3s ease;
       display: inline-block;
-      margin: 0 auto;
       color: white;
       text-decoration: none;
     }
@@ -98,40 +93,58 @@
       color: #fff;
       text-decoration: none;
     }
-    .text-center {
-      margin-top: 10px;
-      text-align: center;
+    canvas {
+      margin-top: 30px;
     }
   </style>
 </head>
 <body>
   <div class="card">
-
-    <!-- Flash messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="mb-3">
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
-
     <h1>Results for {{ filename }}</h1>
 
     <div class="output-container">
       {{ output|safe }}
     </div>
 
+    {% if gc_data %}
+    <canvas id="gcChart" height="180"></canvas>
+    <script>
+      const gcData = {{ gc_data|safe }};
+      const ctx = document.getElementById('gcChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(gcData),
+          datasets: [{
+            label: 'Base Composition',
+            data: Object.values(gcData),
+            backgroundColor: ['#4e79a7', '#f28e2c', '#e15759', '#76b7b2'],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: true }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Base Count'
+              }
+            }
+          }
+        }
+      });
+    </script>
+    {% endif %}
+
     <div class="text-center">
-      <a href="{{ url_for('home') }}" class="btn btn-secondary">← Back to Upload</a>
+      <a href="/" class="btn btn-secondary">← Back to Upload</a>
     </div>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
