@@ -135,10 +135,11 @@ def analyze():
         result = format_bioseq_output(raw_result)
 
         if show_gc_chart:
+            # Example raw_result line: "A:4049(30.40%) C:2593(19.47%) G:3119(23.41%) T:3560(26.72%)"
             matches = re.findall(r'([ACGT]):(\d+)', raw_result)
             for base, count in matches:
                 gc_data[base] = int(count)
-            return render_template('result.html', output=result, filename=file.filename, gc_data=json.dumps(gc_data))
+            return render_template('result.html', output=result, filename=file.filename, gc_chart_data=json.dumps(gc_data))
 
     except subprocess.CalledProcessError as e:
         result = f"Error running bioseq:\n{e.output.decode('utf-8')}"
